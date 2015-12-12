@@ -1,23 +1,27 @@
-var Comet = function (pX, pY, vX, vY,m) {
+var Comet = function (pX, pY, vX, vY, m) {
   this.pos = {x:pX, y:pY};
   this.vel = {x:vX, y:vY};
+  this.alive = true;
   this.m = m;
 }
 
-Comet.prototype.update = function (planet) {
+Comet.prototype.update = function (planets) {
 
-  force = {x: (this.pos.x - planet.pos.x), y: (this.pos.y - planet.pos.y)};
-  dist = Util.len(force);
-  force.x = -force.x / (Math.pow(dist,2)) * this.m;
-  force.y = -force.y / (Math.pow(dist,2)) * this.m;
+  for (i=0; i<N_PLANETS; i++) {
+    force = Util.calcAttraction (this.pos, planets[i].pos, this.m);
 
-  this.vel.x += force.x;
-  this.vel.y += force.y;
-  
+    this.vel.x += force.x;
+    this.vel.y += force.y;
+  }  
   this.pos.x += this.vel.x;
   this.pos.y += this.vel.y;
 }
 
 Comet.prototype.draw = function() {
-  c.fillRect(this.pos.x, this.pos.y, 50, 50);
+  if (!this.alive)return;
+  c.strokeRect(this.pos.x, this.pos.y, this.m, this.m);
+}
+
+Comet.prototype.kill = function() {
+  this.alive = false;
 }
