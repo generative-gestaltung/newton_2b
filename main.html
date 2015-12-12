@@ -2,54 +2,15 @@
 <html>
 
   <head>
+    
+    <script src="settings.js"></script>
+    <script src="util.js"></script>
+    <script src="comets.js"></script>
+    <script src="player.js"></script>
+    <script src="planet.js"></script>
     <script>
 
-
-
-    N_COMETS = 20000;
-    comets = [];
-    planet = {x:0, y:0, g:1};
-
-    var Player = function (pX, pY) {
-      this.pos = {x:pX, y:pY};
-      this.speed = 0;
-    }
     
-    var Comet = function (pX, pY, vX, vY,m) {
-      this.pos = {x:pX, y:pY};
-      this.vel = {x:vX, y:vY};
-      this.m = m;
-    }
-
-    Comet.prototype.update = function () {
-
-      force = {x: (this.pos.x - planet.x), y: (this.pos.y - planet.y)};
-      dist = len(force);
-      force.x = -force.x / (Math.pow(dist,2)) * this.m;
-      force.y = -force.y / (Math.pow(dist,2)) * this.m;
-
-
-      this.vel.x += force.x;
-      this.vel.y += force.y;
-      
-      this.pos.x += this.vel.x;
-      this.pos.y += this.vel.y;
-    }
-
-    Comet.prototype.draw = function() {
-      //console.log(this.pos);
-      c.fillRect(this.pos.x, this.pos.y, 50, 50);
-    }
-
-    var dist = function (v0, v1) {
-      d = {x: (v0.x - v1.x), y: (v0.y - v1.y)};
-      return len(d);
-    }
-
-    var len = function (v) {
-      return Math.sqrt (v.x*v.x + v.y*v.y);
-    }
-
 
     var initComets = function() {
       R = 2000;
@@ -74,7 +35,7 @@
     var W = 0;
     var H = 0;
     var PI = Math.PI;
-    var ZOOM = 0.02;
+    var ZOOM = 1.0;
 
     // classes
     var color = {};
@@ -85,6 +46,10 @@
     var offset = {};
     offset.x = 0;
     offset.y = 0;
+
+    var player = new Player (0,0);
+    var planet = new Planet (0,0,PLANET_RADIUS);
+    var comets = [];
 
     var constrain = function (v, min, max) {
       if (v<min) return min;
@@ -116,71 +81,6 @@
       c.fillStyle = "rgb("+r+","+g+","+b+")";
     }
 
-
-    TABLE_SIZE = 1000;
-    table = [];
-    for (i=0; i<TABLE_SIZE; i++) {
-      table[i] = Math.sin(i*0.1)*50 + Math.random()*30;
-    }
-
-    var blend = function (x, y, t) {
-      return x*(1-t) + y*t;
-    }
-
-    var getRand = function (i) {
-      
-      i = i%(TABLE_SIZE-1);
-      i0 = Math.floor(i);
-      i1 = i0+1;
-      t = (i-i0) / (i1-i0);
-
-      return blend(table[i0], table[i1], t); // * (1+Math.sin(frameCount*0.1+i*0.1));
-    }
-
-    var drawPlayer = function (detail, R) {
-      fill(0,0,255);
-      stroke(0,0,255);
-      offset = detail;   
-      r0 = getRand (( offset)*0.1);
-      x = (R+r0)*Math.sin(Math.PI);
-      y = (R+r0)*Math.cos(Math.PI);
-
-      c.beginPath();
-      c.arc (x,y-5,5,0,2*Math.PI);
-      //c.fillRect(x,y,5,5);
-      c.stroke();
-    }
-
-    var drawSphere = function (detail, R) {
-
-      c.beginPath();
-      stroke(255,0,0);
-
-
-      offset = detail/2;
-      for (i=0; i<detail; i++) { 
-      
-        c.save();
-        c.translate (0,0);
-
-        r0 = getRand ((i+offset)*0.1);
-
-        x0 = (R+r0)*Math.sin((i+offset)/detail*Math.PI*2);
-        y0 = -(R+r0)*Math.cos((i+offset)/detail*Math.PI*2);
-      
-        r0 = getRand ((i+1+offset)*0.1);
-        x1 = (R+r0)*Math.sin(((i+offset)+1)/detail*Math.PI*2);
-        y1 = -(R+r0)*Math.cos(((i+offset)+1)/detail*Math.PI*2);
-        
-        //c.rotate (Math.PI*2*i / detail);
-        c.moveTo(x0,y0);    
-        c.lineTo(x1,y1);
-        c.restore();
-      }
-      c.stroke();
-    }
-
-
     var sin = function (f, phase, A) {
       return Math.sin(frameCount*f+phase)*A/2+A/2;
     }
@@ -200,12 +100,14 @@
       
       c.translate (W/2, R*ZOOM + H/2);  
       c.scale (ZOOM,ZOOM);
-      drawSphere (1300, R);
-      drawPlayer (1300, R);
 
+      planet.draw (1000);
+      
+      player.update (planet);
+      player.draw (planet);
 
       for (i=0; i<N_COMETS; i++) {
-        comets[i].update();
+        comets[i].update(planet);
         comets[i].draw();
       }
       c.restore();
@@ -218,14 +120,11 @@
 
   <body style="overflow:hidden">
 
-
     <canvas id="myCanvas" width="1280" height="800"></canvas>
-    
     <script>
       init();
       draw();		
     </script>
-
   </body>
 
 </html>      
