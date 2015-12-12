@@ -1,0 +1,154 @@
+<!DOCTYPE HTML>
+<html>
+
+  <head>
+    <script>
+
+
+    // VARIABLES
+    var canvas;
+    var g;
+    var frameCount;
+    var N = 10;
+    var W = 0;
+    var H = 0;
+    var PI = Math.PI;
+
+    // classes
+    var color = {};
+    color.r = 0;
+    color.g = 100;
+    color.b = 100;
+
+    var offset = {};
+    offset.x = 0;
+    offset.y = 0;
+
+    var init = function() {
+      canvas = document.getElementById("myCanvas");
+      W = canvas.width;
+      H = canvas.height;
+      c = canvas.getContext('2d');
+      frameCount = 0;
+    }
+
+
+
+    var stroke = function (r, g, b) {
+      c.strokeStyle = "rgb("+r+","+g+","+b+")";
+    }
+
+    var fill = function (r,g,b) {
+      c.fillStyle = "rgb("+r+","+g+","+b+")";
+    }
+
+
+    TABLE_SIZE = 1000;
+    table = [];
+    for (i=0; i<TABLE_SIZE; i++) {
+      table[i] = Math.sin(i*0.1)*50 + Math.random()*30;
+    }
+
+    var blend = function (x, y, t) {
+      return x*(1-t) + y*t;
+    }
+
+    var getRand = function (i) {
+      
+      i = i%(TABLE_SIZE-1);
+      i0 = Math.floor(i);
+      i1 = i0+1;
+      t = (i-i0) / (i1-i0);
+
+      return blend(table[i0], table[i1], t); // * (1+Math.sin(frameCount*0.1+i*0.1));
+    }
+
+    var drawPlayer = function (detail, R) {
+      fill(0,0,255);
+      stroke(0,0,255);
+      offset = detail;   
+      r0 = getRand ((frameCount+offset)*0.1);
+      x = (R+r0)*Math.sin(Math.PI);
+      y = (R+r0)*Math.cos(Math.PI);
+
+      c.beginPath();
+      c.arc (x,y-5,5,0,2*Math.PI);
+      //c.fillRect(x,y,5,5);
+      c.stroke();
+    }
+
+    var drawSphere = function (detail, R) {
+
+      c.beginPath();
+      stroke(255,0,0);
+
+
+      offset = detail/2;
+      for (i=0; i<detail; i++) { 
+      
+        c.save();
+        c.translate (0,0);
+
+        r0 = getRand ((i+frameCount+offset)*0.1);
+
+        x0 = (R+r0)*Math.sin((i+offset)/detail*Math.PI*2);
+        y0 = -(R+r0)*Math.cos((i+offset)/detail*Math.PI*2);
+      
+        r0 = getRand ((i+1+frameCount+offset)*0.1);
+        x1 = (R+r0)*Math.sin(((i+offset)+1)/detail*Math.PI*2);
+        y1 = -(R+r0)*Math.cos(((i+offset)+1)/detail*Math.PI*2);
+        
+        //c.rotate (Math.PI*2*i / detail);
+        c.moveTo(x0,y0);    
+        c.lineTo(x1,y1);
+        c.restore();
+      }
+      c.stroke();
+    }
+
+
+    var sin = function (f, phase, A) {
+      return Math.sin(frameCount*f+phase)*A/2+A/2;
+    }
+
+    var draw = function() {
+
+      c.save();
+      c.clearRect (0, 0, canvas.width, canvas.height);  
+
+      x = Math.sin(frameCount*0.02)*400+400;
+      y = Math.sin(frameCount*0.03)*400+400;
+
+      R = 800;//Math.sin(frameCount*0.01)*500+500;
+
+
+      s = sin(0.01, PI, 5)+0.1;
+      s = 1;
+      c.translate (W/2, R*s + H/2);  
+      c.scale (s,s);
+      drawSphere (1300, R);
+      drawPlayer (1300, R);
+
+      c.restore();
+      frameCount = frameCount+1;
+      requestAnimationFrame(draw);
+    };
+
+    </script>
+  </head>
+
+  <body>
+
+
+    <canvas id="myCanvas" width="1280" height="800"></canvas>
+    
+
+
+    <script>
+      init();
+      draw();		
+    </script>
+
+  </body>
+
+</html>      
