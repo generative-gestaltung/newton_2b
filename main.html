@@ -10,7 +10,6 @@
     <script src="planet.js"></script>
     <script>
 
-    
 
     var initComets = function() {
       R = 2000;
@@ -26,6 +25,16 @@
       }
     }
 
+    var initPlanets = function () {
+      var R = 1000;
+      for (var i=0; i<N_PLANETS; i++) {
+        var phase = Util.rand(0, Math.PI*2);
+        x = R*Math.cos(phase);
+        y = R*Math.sin(phase);
+        planets[i] = new Planet (x,y,Util.rand(PLANET_R_MIN, PLANET_R_MAX));
+        R += Util.rand(4000,6000);
+      }
+    }
 
     // VARIABLES
     var canvas;
@@ -48,8 +57,9 @@
     offset.y = 0;
 
     var player = new Player (0,0);
-    var planet = new Planet (0,0,PLANET_RADIUS);
+    var planets = [];
     var comets = [];
+
 
 
     var init = function() {
@@ -60,6 +70,7 @@
       frameCount = 0;
 
       initComets();
+      initPlanets();
       canvas.addEventListener("mousewheel", function(e) {
         ZOOM += e.wheelDeltaY*0.002;
         ZOOM = Util.constrain(ZOOM, 0.02, 1.5);
@@ -92,29 +103,35 @@
     var draw = function() {
 
       c.save();
-      c.clearRect (0, 0, canvas.width, canvas.height);  
+      c.fillStyle = "rgba(0,0,0,0.1)";
+      c.fillRect (0, 0, canvas.width, canvas.height);  
 
       
-      ZOOM = 30.0 / (Math.abs(player.speed)+20.0);
+      //ZOOM = 30.0 / (Math.abs(player.speed)+20.0);
       c.scale (ZOOM, ZOOM);
       c.translate (W/2/ZOOM, H/2/ZOOM);  
       //c.scale (ZOOM,ZOOM);
 
 
-      r = planet.getRound(player.angle);
+      r = planets[0].getRound(player.angle);
       c.rotate(player.angle+Math.PI);
       
       c.translate (-r.x, -r.y);
       
-      console.log(r);
-      planet.draw (1000);
-      player.update (planet);
-      player.draw (planet);
+      for (var i=0; i<N_PLANETS; i++) {
+        planets[i].draw (1000);
+      }
+
+      
+      /*
+      player.update (planets[0]);
+      player.draw (planets[0]);
 
       for (i=0; i<N_COMETS; i++) {
-        comets[i].update(planet);
+        comets[i].update (planets[0]);
         comets[i].draw();
       }
+      */
       c.restore();
       frameCount = frameCount+1;
       requestAnimationFrame(draw);

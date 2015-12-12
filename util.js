@@ -18,3 +18,7 @@ Util.constrain = function (v, min, max) {
   if (v>max) return max;
   return v;
 }
+
+Util.rand = function (min, max) {
+	return Math.random()*(max-min) + min;
+}

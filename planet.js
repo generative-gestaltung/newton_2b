@@ -26,11 +26,10 @@ Planet.prototype.getSurface = function (i) {
     return Util.blend (this.table[i0], this.table[i1], t) + this.R; // * (1+Math.sin(frameCount*0.1+i*0.1));
 }
 
-
 Planet.prototype.draw = function (detail) {
 
     c.beginPath();
-    stroke(255,0,0);
+    stroke(255,255,255);
 
     offset = detail/2;
     for (i=0; i<detail; i++) { 
@@ -40,19 +39,38 @@ Planet.prototype.draw = function (detail) {
 
       r0 = this.getSurface (i / detail * Math.PI*2);
 
-      x0 = r0*Math.sin(i/detail*Math.PI*2);
-      y0 = r0*Math.cos(i/detail*Math.PI*2);
+      x0 = r0*Math.sin(i/detail*Math.PI*2) + this.pos.x;
+      y0 = r0*Math.cos(i/detail*Math.PI*2) + this.pos.y;
     
       r0 = this.getSurface((i+1) / detail * Math.PI*2);
 
       
-      x1 = r0*Math.sin((i+1)/detail*Math.PI*2);
-      y1 = r0*Math.cos((i+1)/detail*Math.PI*2);
+      x1 = r0*Math.sin((i+1)/detail*Math.PI*2) + this.pos.x;
+      y1 = r0*Math.cos((i+1)/detail*Math.PI*2) + this.pos.y;
       
       //c.rotate (Math.PI*2*i / detail);
-      c.moveTo(x0,y0);    
+         
       c.lineTo(x1,y1);
       c.restore();
     }
+    
+    c.lineWidth = 5;
+    c.fillStyle = '#333333';
+    c.fill();
+    c.strokeStyle = '#ffffff';
     c.stroke();
 }
+
+var updatePlanets = function() {
+    for (var i=0; i<N_PLANETS; i++) {
+        for (var j=0; j<N_PLANETS; j++) {
+
+        }
+    }
+}
+
+
+
+
+
+
