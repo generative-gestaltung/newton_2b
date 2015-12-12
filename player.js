@@ -5,7 +5,12 @@ var Player = function (pX, pY) {
 }
 
 Player.prototype.update = function (planet) {
-	this.angle = (this.angle + 0.01) % (Math.PI*2);
+
+	this.speed = Util.constrain (this.speed, -PLAYER_MAX_SPEED, PLAYER_MAX_SPEED);
+	sp = 1.0 - Math.cos(this.speed / PLAYER_MAX_SPEED*Math.PI);
+	sp *= PLAYER_MAX_SPEED * Math.sign(this.speed);
+
+	this.angle = (this.angle + 0.001*sp) % (Math.PI*2);
 	
     r0 = planet.getSurface (this.angle);
     this.pos.x = r0*Math.sin (this.angle);

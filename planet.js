@@ -7,9 +7,16 @@ var Planet = function (pX, pY, r) {
     }
 }
 
+Planet.prototype.getRound = function (i) {
+    return {x:Math.sin(i)*this.R, y:Math.cos(i)*this.R};
+}
+
 
 Planet.prototype.getSurface = function (i) {
 
+    while (i<0) {
+        i+=(Math.PI*2);
+    }
     i = i / (Math.PI*2) * TABLE_SIZE * PLANET_NOISE_F;
     i = i%(TABLE_SIZE-1);
     i0 = Math.floor(i);
