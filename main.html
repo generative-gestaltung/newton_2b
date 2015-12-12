@@ -5,6 +5,67 @@
     <script>
 
 
+
+    N_COMETS = 20000;
+    comets = [];
+    planet = {x:0, y:0, g:1};
+
+    var Player = function (pX, pY) {
+      this.pos = {x:pX, y:pY};
+      this.speed = 0;
+    }
+    
+    var Comet = function (pX, pY, vX, vY,m) {
+      this.pos = {x:pX, y:pY};
+      this.vel = {x:vX, y:vY};
+      this.m = m;
+    }
+
+    Comet.prototype.update = function () {
+
+      force = {x: (this.pos.x - planet.x), y: (this.pos.y - planet.y)};
+      dist = len(force);
+      force.x = -force.x / (Math.pow(dist,2)) * this.m;
+      force.y = -force.y / (Math.pow(dist,2)) * this.m;
+
+
+      this.vel.x += force.x;
+      this.vel.y += force.y;
+      
+      this.pos.x += this.vel.x;
+      this.pos.y += this.vel.y;
+    }
+
+    Comet.prototype.draw = function() {
+      //console.log(this.pos);
+      c.fillRect(this.pos.x, this.pos.y, 50, 50);
+    }
+
+    var dist = function (v0, v1) {
+      d = {x: (v0.x - v1.x), y: (v0.y - v1.y)};
+      return len(d);
+    }
+
+    var len = function (v) {
+      return Math.sqrt (v.x*v.x + v.y*v.y);
+    }
+
+
+    var initComets = function() {
+      R = 2000;
+      for (i=0; i<N_COMETS; i++) {
+        arg = Math.PI*2*i/N_COMETS;
+        pX = R*Math.sin (arg) + Math.random()*2000-1000;
+        pY = R*Math.cos (arg) + Math.random()*2000-1000;;
+
+        vX =  Math.cos(arg)*20;
+        vY = -Math.sin(arg)*20;
+
+        comets[i] = new Comet (pX, pY, vX, vY, Math.random()*100+100);
+      }
+    }
+
+
     // VARIABLES
     var canvas;
     var g;
@@ -13,6 +74,7 @@
     var W = 0;
     var H = 0;
     var PI = Math.PI;
+    var ZOOM = 0.02;
 
     // classes
     var color = {};
@@ -24,12 +86,24 @@
     offset.x = 0;
     offset.y = 0;
 
+    var constrain = function (v, min, max) {
+      if (v<min) return min;
+      if (v>max) return max;
+      return v;
+    }
+
     var init = function() {
       canvas = document.getElementById("myCanvas");
       W = canvas.width;
       H = canvas.height;
       c = canvas.getContext('2d');
       frameCount = 0;
+
+      initComets();
+      canvas.addEventListener("mousewheel", function(e) {
+        ZOOM += e.wheelDeltaY*0.002;
+        ZOOM = constrain(ZOOM, 0.02, 1.5);
+      });
     }
 
 
@@ -67,7 +141,7 @@
       fill(0,0,255);
       stroke(0,0,255);
       offset = detail;   
-      r0 = getRand ((frameCount+offset)*0.1);
+      r0 = getRand (( offset)*0.1);
       x = (R+r0)*Math.sin(Math.PI);
       y = (R+r0)*Math.cos(Math.PI);
 
@@ -89,12 +163,12 @@
         c.save();
         c.translate (0,0);
 
-        r0 = getRand ((i+frameCount+offset)*0.1);
+        r0 = getRand ((i+offset)*0.1);
 
         x0 = (R+r0)*Math.sin((i+offset)/detail*Math.PI*2);
         y0 = -(R+r0)*Math.cos((i+offset)/detail*Math.PI*2);
       
-        r0 = getRand ((i+1+frameCount+offset)*0.1);
+        r0 = getRand ((i+1+offset)*0.1);
         x1 = (R+r0)*Math.sin(((i+offset)+1)/detail*Math.PI*2);
         y1 = -(R+r0)*Math.cos(((i+offset)+1)/detail*Math.PI*2);
         
@@ -122,13 +196,18 @@
       R = 800;//Math.sin(frameCount*0.01)*500+500;
 
 
-      s = sin(0.01, PI, 5)+0.1;
-      s = 1;
-      c.translate (W/2, R*s + H/2);  
-      c.scale (s,s);
+      //s = sin(0.01, PI, 5)+0.1;
+      
+      c.translate (W/2, R*ZOOM + H/2);  
+      c.scale (ZOOM,ZOOM);
       drawSphere (1300, R);
       drawPlayer (1300, R);
 
+
+      for (i=0; i<N_COMETS; i++) {
+        comets[i].update();
+        comets[i].draw();
+      }
       c.restore();
       frameCount = frameCount+1;
       requestAnimationFrame(draw);
@@ -137,13 +216,11 @@
     </script>
   </head>
 
-  <body>
+  <body style="overflow:hidden">
 
 
     <canvas id="myCanvas" width="1280" height="800"></canvas>
     
-
-
     <script>
       init();
       draw();		
