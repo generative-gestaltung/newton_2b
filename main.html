@@ -121,14 +121,15 @@
       //ZOOM = 30.0 / (Math.abs(player.speed)+20.0);
       console.log(player.distanceToCenter);
       ZOOM = (player.distanceToCenter);
-      ZOOM = (player.planet.R / ZOOM)*0.1;
-      ZOOM = Util.constrain(ZOOM,0.02,8);
+      ZOOM = (player.planet.R / ZOOM)*0.5;
+      ZOOM = Math.pow(ZOOM, 2);
+      ZOOM = Util.constrain(ZOOM,0.005,8);
       c.scale (ZOOM, ZOOM);
       c.translate (W/2/ZOOM, H/2/ZOOM);  
       //c.scale (ZOOM,ZOOM);
 
 
-      r = planets[0].getRound(0);
+      r = player.planet.getRound(0);
       c.rotate(player.phi+Math.PI);
       
       c.translate (-r.x, -r.y);
@@ -139,8 +140,8 @@
       }
       
       
-      player.update (planets[0]);
-      player.draw (planets[0]);
+      player.update (planets);
+      player.draw (player.planet);
 
       for (i=0; i<N_COMETS*SUBCOMETS; i++) {
         comets[i].update (planets);
