@@ -8,28 +8,36 @@ var Player = function (pX, pY, planet) {
 	this.speed = 0;
 	this.angle = 0;
 	this.phi = 0;
+	this.distanceToCenter = 0;
 }
 
 Player.prototype.init = function (planet) {
 	r0 = planet.getSurface (this.angle);
     
-    this.pos.x = (r0*Math.sin (this.angle) + planet.pos.x)+1500;
-    this.pos.y = (r0*Math.cos (this.angle) + planet.pos.y)-100;
+    this.pos.x = (r0*Math.sin (this.angle) + planet.pos.x)+0;
+    this.pos.y = (r0*Math.cos (this.angle) + planet.pos.y)-2*planet.R-1000;
 }
 
 Player.prototype.move = function (dir) {
 
 	// calc intersection with planet circle + tangential dir
 
+	ex = {x:0, y:1};
+	d = {x: this.pos.x - this.planet.pos.x, y: this.pos.y-this.planet.pos.y};
+	this.phi = Util.angleBetween(d,ex);
 
+	this.speed += 0.93;
+	this.speed = Util.constrain(this.speed,0,6);
+	
+/*
 	var arg = (this.pos.x-this.planet.pos.x) / this.planet.R;
 	arg = Util.constrain(arg,0,1);
-	this.speed += 0.3;
-	this.speed = Util.constrain(this.speed,0,6);
 	this.phi = Math.acos (arg);
+	this.phi = angle;
+*/
 	var att = Util.calcAttraction (this.pos, this.planet.pos, 500);
-	this.vel2.x = -Math.sin (this.phi)*dir*this.speed - att.x;
-	this.vel2.y =  Math.cos (this.phi)*dir*this.speed - att.y;
+	this.vel2.x = -Math.cos (this.phi)*dir*this.speed - att.x;
+	this.vel2.y =  Math.sin (this.phi)*dir*this.speed - att.y;
 }
 
 
@@ -50,18 +58,18 @@ Player.prototype.update = function (planet) {
 
 	//this.init(planet);
 
-	att = Util.calcAttraction (this.pos, planet.pos, 1000);
+	att = Util.calcAttraction (this.pos, planet.pos, 3000);
 	this.attraction.x += att.x;
 	this.attraction.y += att.y;
 
-	distanceToCenter = Util.dist (this.pos, planet.pos);
+	this.distanceToCenter = Util.dist (this.pos, planet.pos);
 
 
 
 	//	console.log (distanceToCenter,this.phi,planet.getSurface(this.phi));
-	if (distanceToCenter < planet.getSurface(this.phi)) {
-		this.attraction.x *= -0.6;
-		this.attraction.y *= -0.6;
+	if (this.distanceToCenter < planet.getSurface(this.phi)) {
+		this.attraction.x *= -0.8;
+		this.attraction.y *= -0.8;
 	}
 
 
@@ -86,7 +94,6 @@ Player.prototype.update = function (planet) {
 
     //this.pos.x = (r0*Math.sin (this.angle) + planet.pos.x);
     //this.pos.y = (r0*Math.cos (this.angle) + planet.pos.y);
-
 }
 
 Player.prototype.draw = function (planet) {

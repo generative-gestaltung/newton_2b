@@ -1,4 +1,5 @@
 N_COMETS = 4000;
+COMET_N_POINTS = 9;
 N_PLANETS = 5;
 	
 TABLE_SIZE = 1000;
@@ -7,12 +8,16 @@ MOVE_DETAIL = 1300;
 
 PLAYER_MAX_SPEED = 100;
 
-PLANET_SIN_A = 10;
-PLANET_RAND_A = 120;
-PLANET_NOISE_F = 0.1;
+PLANET_SIN_A = 100;
+PLANET_RAND_A = 420;
+PLANET_NOISE_F = 0.05;
 
 PLANET_R_MIN = 1000;
 PLANET_R_MAX = 2400;
 
 
-  center = {x:0, y:0};
+center = {x:0, y:0};
+
+COLORS0 = [{r:255,g:0,b:255},
+           {r:0,g:255,b:255},
+           {r:0,g:0,b:255}]

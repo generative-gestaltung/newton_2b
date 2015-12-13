@@ -6,6 +6,9 @@ var Planet = function (pX, pY, vX, vY, r, orbit, speed) {
     this.speed = speed;
     this.orbit = orbit;
     this.table = [];
+
+    ind = Util.randI(0,2);
+    this.color = {r:COLORS0[ind].r, g:COLORS0[ind].g, b:COLORS0[ind].b};
     this.phase = Math.random()*Math.PI*2;
     for (i=0; i<TABLE_SIZE; i++) {
       this.table[i] = Math.sin(i*0.02)*PLANET_SIN_A + Math.random()*PLANET_RAND_A;
@@ -106,11 +109,8 @@ Planet.prototype.draw = function (detail) {
       c.restore();
     }
     
-    c.lineWidth = 15;
-    c.fillStyle = '#000000';
-    c.fill();
-    c.strokeStyle = '#ffffff';
-    c.stroke();
+    Util.lineBloom (this.color.r,this.color.g,this.color.b,160);
+    //c.fill();
 }
 
 

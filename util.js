@@ -23,6 +23,10 @@ Util.rand = function (min, max) {
 	return Math.random()*(max-min) + min;
 }
 
+Util.randI = function (min, max) {
+  return Math.round(Math.random()*(max-min) + min);
+}
+
 Util.calcAttraction = function (pos0, pos1, m) {
 	var force = {x: (pos0.x - pos1.x), y: (pos0.y - pos1.y)};
   	var dist = Util.len(force);
@@ -46,12 +50,30 @@ Util.distanceLinePoint = function (l0, l1, p) {
 	return nom / den;
 }
 
-Util.circle = function (x,y,R) {
+Util.lineBloom = function (r,g,b,width) {
+  c.strokeStyle = "rgba("+r+","+g+","+b+",0.1)";
+  c.lineWidth = width;
+  c.stroke();
+
+  c.strokeStyle = "rgba("+r+","+g+","+b+",0.1)";
+  c.lineWidth = width/2;
+  c.stroke();
+
+  r += 40;
+  g += 40;
+  b += 40;
+  c.strokeStyle = "rgba("+r+","+g+","+b+",1.0)";
+  c.lineWidth = width/12;
+  c.stroke();
+}
+
+Util.circle = function (x,y,R,r,g,b) {
   c.beginPath();
   c.arc (x,y,R, 0, 2*Math.PI);
-  c.stroke();
-  c.fill();
+  Util.lineBloom (r,g,b,1460);
 }
+
+
 
 
 

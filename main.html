@@ -18,7 +18,7 @@
         R = i*2+8000;
         arg = Math.PI*2*i/N_COMETS;
         pX = 8000; //*R*Math.sin (arg) + Math.random()*2000-1000;
-        pY = i*10; //R*Math.cos (arg) + Math.random()*2000-1000;;
+        pY = i*100-80000; //R*Math.cos (arg) + Math.random()*2000-1000;;
 
         vX =  Math.cos(arg)*20;
         vY = -Math.sin(arg)*20;
@@ -114,18 +114,22 @@
     var draw = function() {
 
       c.save();
-      c.fillStyle = "rgba(0,0,0,1)";
+      c.fillStyle = "rgba(0,0,0,0.7)";
       c.fillRect (0, 0, canvas.width, canvas.height);  
 
       
       //ZOOM = 30.0 / (Math.abs(player.speed)+20.0);
+      console.log(player.distanceToCenter);
+      ZOOM = (player.distanceToCenter);
+      ZOOM = (player.planet.R / ZOOM)*0.1;
+      ZOOM = Util.constrain(ZOOM,0.02,8);
       c.scale (ZOOM, ZOOM);
       c.translate (W/2/ZOOM, H/2/ZOOM);  
       //c.scale (ZOOM,ZOOM);
 
 
       r = planets[0].getRound(0);
-      c.rotate(-player.phi-Math.PI/2);
+      c.rotate(player.phi+Math.PI);
       
       c.translate (-r.x, -r.y);
       
@@ -177,8 +181,10 @@
         comets[i].draw();
       }    
 
-      c.fillStyle = "#ff9102"
-      Util.circle(0,0,4000);
+      //c.fillStyle = "#ff9102"
+      Util.circle(0,0,4000,255,145,2);
+      c.fillStyle = "#000000";
+      c.fill(); 
       c.restore();
       frameCount = frameCount+1;
       
