@@ -21,11 +21,15 @@ Player.prototype.move = function (dir) {
 
 	// calc intersection with planet circle + tangential dir
 
+
 	var arg = (this.pos.x-this.planet.pos.x) / this.planet.R;
+	arg = Util.constrain(arg,0,1);
+	this.speed += 0.3;
+	this.speed = Util.constrain(this.speed,0,6);
 	this.phi = Math.acos (arg);
 	var att = Util.calcAttraction (this.pos, this.planet.pos, 500);
-	this.vel2.x = -Math.sin (this.phi)*dir - att.x;
-	this.vel2.y =  Math.cos (this.	phi)*dir - att.y;
+	this.vel2.x = -Math.sin (this.phi)*dir*this.speed - att.x;
+	this.vel2.y =  Math.cos (this.phi)*dir*this.speed - att.y;
 }
 
 
@@ -59,8 +63,11 @@ Player.prototype.update = function (planet) {
 		this.attraction.x *= -0.6;
 		this.attraction.y *= -0.6;
 	}
-	this.vel.x += planet.acc.x;
-	this.vel.y += planet.acc.y;
+
+
+	sunAttraction = Util.calcAttraction(this.pos, center, 0);
+	this.vel.x += planet.acc.x + sunAttraction.x;
+	this.vel.y += planet.acc.y + sunAttraction.y;
     
     
     //console.log ("planet p:", planet.pos.x, planet.pos.y);
@@ -75,6 +82,8 @@ Player.prototype.update = function (planet) {
 	this.vel2.x *= 0.9;
 	this.vel2.y *= 0.9;
 
+	this.speed *= 0.5;
+
     //this.pos.x = (r0*Math.sin (this.angle) + planet.pos.x);
     //this.pos.y = (r0*Math.cos (this.angle) + planet.pos.y);
 
@@ -83,8 +92,9 @@ Player.prototype.update = function (planet) {
 Player.prototype.draw = function (planet) {
 
 	stroke(255,255,255); 
-
+	c.fillStyle = "#ffffff";
     c.beginPath();
     c.arc (this.pos.x, this.pos.y-5, 55, 0, 2*Math.PI);
     c.stroke();
+    c.fill();
 }    

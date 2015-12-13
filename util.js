@@ -46,5 +46,12 @@ Util.distanceLinePoint = function (l0, l1, p) {
 	return nom / den;
 }
 
+Util.circle = function (x,y,R) {
+  c.beginPath();
+  c.arc (x,y,R, 0, 2*Math.PI);
+  c.stroke();
+  c.fill();
+}
+
 
 

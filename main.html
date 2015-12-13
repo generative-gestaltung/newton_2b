@@ -11,17 +11,23 @@
     <script>
 
 
+    SUBCOMETS = 4;
     var initComets = function() {
       R = 9000;
       for (i=0; i<N_COMETS; i++) {
+        R = i*2+8000;
         arg = Math.PI*2*i/N_COMETS;
-        pX = R*Math.sin (arg) + Math.random()*2000-1000;
-        pY = R*Math.cos (arg) + Math.random()*2000-1000;;
+        pX = 8000; //*R*Math.sin (arg) + Math.random()*2000-1000;
+        pY = i*10; //R*Math.cos (arg) + Math.random()*2000-1000;;
 
         vX =  Math.cos(arg)*20;
         vY = -Math.sin(arg)*20;
 
-        comets[i] = new Comet (pX, pY, vX, vY, Util.rand(30,300));
+        comets[i*SUBCOMETS] = new Comet (pX, pY, vX, vY, Util.rand(30,300),true);
+        comets[i*SUBCOMETS].vel.y = -Util.rand(50,100);
+        comets[i*SUBCOMETS+1] = new Comet(0,0,0,0,0,false);
+        comets[i*SUBCOMETS+2] = new Comet(0,0,0,0,0,false);
+        comets[i*SUBCOMETS+3] = new Comet(0,0,0,0,0,false);
       }
     }
 
@@ -31,7 +37,7 @@
         var phase = Util.rand(0, Math.PI*2);
         x = R*Math.cos(phase);
         y = R*Math.sin(phase);
-        speed = Math.random()*0.1+0.1;
+        speed = Math.random()*0.4+0.4;
         //speed = 0;
         planets[i] = new Planet (x,y,0,0,Util.rand(PLANET_R_MIN, PLANET_R_MAX),R, speed);
         R += Util.rand(6000,10000);
@@ -80,11 +86,9 @@
 
       document.addEventListener("keydown", function (e) {
         if (e.which==37) {
-          player.speed+=0.3;
           player.move(1);
         }
         else if (e.which==39) {
-          player.speed-=0.3;
           player.move(-1);
         }
       });
@@ -110,7 +114,7 @@
     var draw = function() {
 
       c.save();
-      c.fillStyle = "rgba(0,0,0,0.5)";
+      c.fillStyle = "rgba(0,0,0,1)";
       c.fillRect (0, 0, canvas.width, canvas.height);  
 
       
@@ -120,8 +124,8 @@
       //c.scale (ZOOM,ZOOM);
 
 
-      r = planets[0].getRound(player.angle);
-      c.rotate(player.angle+Math.PI);
+      r = planets[0].getRound(0);
+      c.rotate(-player.phi-Math.PI/2);
       
       c.translate (-r.x, -r.y);
       
@@ -134,7 +138,7 @@
       player.update (planets[0]);
       player.draw (planets[0]);
 
-      for (i=0; i<N_COMETS; i++) {
+      for (i=0; i<N_COMETS*SUBCOMETS; i++) {
         comets[i].update (planets);
 
         c.fillStyle = "#0000ff";
@@ -146,18 +150,41 @@
         }
 
         var d = Math.sqrt(Math.pow((comets[i].pos.x-player.pos.x),2)+Math.pow((comets[i].pos.y-player.pos.y),2));
-        if (d<comets[i].m) {
-          comets[i].kill();
+
+        if (d<comets[i].m && comets[i].alive) {
+
+
+          if (comets[i].m>1) {
+          var r0 = Util.rand(-24,24);
+          var r1 = Util.rand(-24,24);
+
+          comets[i]   = new Comet (comets[i].pos.x, comets[i].pos.y, 
+                                   comets[i].vel.x+r0, comets[i].vel.y+r1, 
+                                   comets[i].m/2, true);
+
+          r0 = Util.rand(-24,24);
+          r1 = Util.rand(-24,24);
+
+          comets[i]   = new Comet (comets[i].pos.x+20, comets[i].pos.y, 
+                                   comets[i].vel.x+r0, comets[i].vel.y+r1, 
+                                   comets[i].m/2, true);
+          }
+          else {
+            comets[i].kill(); 
+          }
         }
 
         comets[i].draw();
       }    
+
+      c.fillStyle = "#ff9102"
+      Util.circle(0,0,4000);
       c.restore();
       frameCount = frameCount+1;
       
       setTimeout(function() {
         requestAnimationFrame(draw);
-      }, 1000 / 30);
+      }, 1000 / 60);
     };
 
     </script>

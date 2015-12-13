@@ -32,7 +32,8 @@ Planet.prototype.isInside = function (point) {
 
  
 Planet.prototype.getRound = function (i) {
-    return {x:Math.sin(i)*this.R+this.pos.x, y:Math.cos(i)*this.R+this.pos.y};
+    return {x:this.pos.x, y:this.pos.y};
+    //return {x:Math.sin(i)*this.R+this.pos.x, y:Math.cos(i)*this.R+this.pos.y};
 }
 
 
@@ -105,8 +106,8 @@ Planet.prototype.draw = function (detail) {
       c.restore();
     }
     
-    c.lineWidth = 5;
-    c.fillStyle = '#333333';
+    c.lineWidth = 15;
+    c.fillStyle = '#000000';
     c.fill();
     c.strokeStyle = '#ffffff';
     c.stroke();
