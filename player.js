@@ -157,7 +157,7 @@ Player.prototype.update = function (planets) {
 	this.speed *= 0.9;
 
 
-	if (Util.dist(this.pos, center) < SUN_R || this.distanceToCenter>100000) {
+	if (Util.dist(this.pos, center) < SUN_R || this.distanceToCenter>100000 && started) {
 		gameOver = true;
 		document.getElementById("info").innerHTML = "game over";
 		if (started)

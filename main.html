@@ -94,7 +94,6 @@
       H = canvas.height;
       c = canvas.getContext('2d');
       frameCount = 0;
-
       initGame();
     }
 
@@ -113,14 +112,14 @@
           if (e.which==32) {
             started = true;
             gameOver = false;
-            document.getElementById("info").innerHTML=  "";
+            document.getElementById("info").innerHTML="";
             init();
           }
         }
         else if (gameOver) {
           if (e.which==32) {
             gameOver = false;
-            document.getElementById("info").innerHTML=  "";
+            document.getElementById("info").innerHTML="";
             init();
           }
         }
