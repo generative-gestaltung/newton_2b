@@ -33,7 +33,12 @@
     }
 
     var emitComet = function (i) {
-      comets[i] = new Comet (8000, 8000, 10, 10, Util.rand(30,300),true);
+
+      if(Math.random() > 0.5){
+      comets[i] = new Comet (Util.rand(40000,41000), Util.rand(40000,41000), 10, 10, Util.rand(30,300),true);
+      }else{
+      comets[i] = new Comet (Util.rand(-40000,-41000), Util.rand(-40000,-41000), 10, 10, Util.rand(30,300),true);
+      } 
       comets[i].vel.y = -Util.rand(50,100);
     }
 
@@ -226,9 +231,10 @@
         
         feedPlanets(comets[i], false&&(!gameOver));
 
-        var d = Math.sqrt(Math.pow((comets[i].pos.x-player.pos.x),2)+Math.pow((comets[i].pos.y-player.pos.y),2));
+        // var d = Math.sqrt(Math.pow((comets[i].pos.x-player.pos.x),2)+Math.pow((comets[i].pos.y-player.pos.y),2));
+        var d = Util.dist(comets[i].pos,player.pos);
 
-        if (d<comets[i].m && comets[i].alive) {
+        if (d < comets[i].m + PLAYER_SIZE && comets[i].alive) {
 
           score+=5;
           comets[i].kill();
@@ -275,9 +281,9 @@
   <body style="overflow:hidden">
 
     <div id="hud" style="position:absolute; top:50px; left:50px; color:white">
-      <div id="speed"></div>
-      <div id="R"></div>
-      <div id="score">0</div>
+      <div id="speed" style="display:none;"></div>
+      <div id="R" style="display:none;"></div>
+      <b id="score" style="color:#ff9120; font-size:30pt;">0</b>
     </div>
 
     <div id="info" style="position:absolute; top:50%; left:20%; color:white; font-size:140pt;">

@@ -40,7 +40,7 @@ Player.prototype.move = function (dir) {
 
 	//this.calcAngle();
 
-	this.speed += 0.5;
+	this.speed += 0.25;
 	this.speed = Util.constrain(this.speed,0,PLAYER_MAX_SPEED);
 	
 /*
@@ -91,7 +91,7 @@ Player.prototype.update = function (planets) {
 	}
 	*/
 	for (i=0; i<N_PLANETS; i++) {
-		if (Util.dist(planets[i].pos, this.pos)<PLANET_HOME_DISTANCE) {
+		if (Util.dist(planets[i].pos, this.pos) < PLANET_HOME_DISTANCE+planets[i].R) {
 			this.activePlanet = i;
 			break;
 		}
@@ -176,7 +176,7 @@ Player.prototype.draw = function (planets) {
 	stroke(255,255,255); 
 	c.fillStyle = "#ffffff";
     c.beginPath();
-    c.arc (this.pos.x, this.pos.y-5, 55, 0, 2*Math.PI);
+    c.arc (this.pos.x, this.pos.y-5, PLAYER_SIZE, 0, 2*Math.PI);
     c.stroke();
     c.fill();
 
@@ -186,9 +186,9 @@ Player.prototype.draw = function (planets) {
     c.lineTo(this.planet.pos.x, this.planet.pos.y);
     c.stroke();
 
-    c.beginPath();
-    c.moveTo(this.pos.x, this.pos.y);
-    c.lineTo(planets[this.runnerUpPlanet].pos.x, planets[this.runnerUpPlanet].pos.y);
-    c.stroke();
+    //c.beginPath();
+    //c.moveTo(this.pos.x, this.pos.y);
+    //c.lineTo(planets[this.runnerUpPlanet].pos.x, planets[this.runnerUpPlanet].pos.y);
+    //c.stroke();
 
 }    
