@@ -6,6 +6,7 @@ var Planet = function (pX, pY, vX, vY, r, orbit, speed) {
     this.speed = speed;
     this.orbit = orbit;
     this.table = [];
+    this.atmosphereR = r+1000;
 
     ind = Util.randI(0,2);
     this.color = {r:COLORS0[ind].r, g:COLORS0[ind].g, b:COLORS0[ind].b};
@@ -110,6 +111,8 @@ Planet.prototype.draw = function (detail) {
     }
     
     Util.lineBloom (this.color.r,this.color.g,this.color.b,160);
+    Util.circleNoBloom(this.pos.x, this.pos.y, this.atmosphereR, 255, 255, 255);
+
     //c.fill();
 }
 

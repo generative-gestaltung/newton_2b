@@ -8,8 +8,18 @@ var Player = function (pX, pY, planet) {
 	this.speed = 0;
 	this.angle = 0;
 	this.phi = 0;
+	
+	//closest planet
 	this.activePlanet = 0;
+
+	//second closest
+	this.runnerUpPlanet = 0;
+	
+	// distance to active planet center
 	this.distanceToCenter = 0;
+
+	// distance to runner up planet
+	this.distanceToRunnerUp = 0;
 }
 
 Player.prototype.init = function (planet) {
@@ -19,16 +29,19 @@ Player.prototype.init = function (planet) {
     this.pos.y = (r0*Math.cos (this.angle) + planet.pos.y)-2*planet.R-1000;
 }
 
+Player.prototype.calcAngle = function () {
+	ex = {x:0, y:1};
+	d = {x: this.pos.x - this.planet.pos.x, y: this.pos.y-this.planet.pos.y};
+	this.phi = Util.angleBetween(d,ex);
+}
 Player.prototype.move = function (dir) {
 
 	// calc intersection with planet circle + tangential dir
 
-	ex = {x:0, y:1};
-	d = {x: this.pos.x - this.planet.pos.x, y: this.pos.y-this.planet.pos.y};
-	this.phi = Util.angleBetween(d,ex);
+	//this.calcAngle();
 
-	this.speed += 0.93;
-	this.speed = Util.constrain(this.speed,0,6);
+	this.speed += 0.5;
+	this.speed = Util.constrain(this.speed,0,PLAYER_MAX_SPEED);
 	
 /*
 	var arg = (this.pos.x-this.planet.pos.x) / this.planet.R;
@@ -59,15 +72,32 @@ Player.prototype.update = function (planets) {
 
 	//this.init(planet);
 
+	this.calcAngle();
+
 	var dMin = 999999;
+	var dMin2 = 999999;
 	
+
+	/*
 	for (i=0; i<N_PLANETS; i++) {
 		var d = Util.dist(this.pos, planets[i].pos);
 		if (d<dMin) {
 			dMin = d;
 			this.activePlanet = i;
 		}
+		if (d<dMin2 && d>dMin) {
+			dMin2 = d;
+			this.runnerUpPlanet = i;
+		}
 	}
+	*/
+	for (i=0; i<N_PLANETS; i++) {
+		if (Util.dist(planets[i].pos, this.pos)<PLANET_HOME_DISTANCE) {
+			this.activePlanet = i;
+			break;
+		}
+	}
+
 	this.planet = planets[this.activePlanet];
 
 	att = Util.calcAttraction (this.pos, this.planet.pos, 5000);
@@ -80,8 +110,8 @@ Player.prototype.update = function (planets) {
 
 	//	console.log (distanceToCenter,this.phi,planet.getSurface(this.phi));
 	if (this.distanceToCenter < this.planet.getSurface(this.phi)) {
-		this.attraction.x *= -0.3;
-		this.attraction.y *= -0.3;
+		this.attraction.x *= 0;
+		this.attraction.y *= 0;
 	}
 
 	planetAttraction = {x:0,y:0};
@@ -91,9 +121,25 @@ Player.prototype.update = function (planets) {
 		planetAttraction.x += att.x;
 		planetAttraction.y += att.y;
 	}
+	dampSun = 1.0;
+	dampOthers = 1.0;
+	dampHome = 0.9;
+
+	if (Util.dist(this.pos, this.planet.pos)<this.planet.atmosphereR) {
+    	dampSun = 0;
+    	dampOthers = 0;
+    	dampHome = 0.1;
+    }
+
 	sunAttraction = Util.calcAttraction(this.pos, center, 0);
-	this.vel.x += this.planet.acc.x + sunAttraction.x + planetAttraction.x;
-	this.vel.y += this.planet.acc.y + sunAttraction.y + planetAttraction.y;
+	this.vel.x += this.planet.acc.x 
+	            + sunAttraction.x*SUN_INFLUENCE*dampSun 
+	            + planetAttraction.x*OTHER_PLANETS_INFLUENCE*dampOthers;
+
+	this.vel.y += this.planet.acc.y 
+	           + sunAttraction.y*SUN_INFLUENCE*dampSun 
+	           + planetAttraction.y*OTHER_PLANETS_INFLUENCE*dampOthers;
+    
     
     
     //console.log ("planet p:", planet.pos.x, planet.pos.y);
@@ -102,19 +148,23 @@ Player.prototype.update = function (planets) {
 			
 
 
-    this.pos.x += this.vel.x + this.vel2.x*25 + this.attraction.x;
-	this.pos.y += this.vel.y + this.vel2.y*25 + this.attraction.y;
+    this.pos.x += this.vel.x + this.vel2.x*25 + this.attraction.x * HOME_PLANET_INFLUENCE * dampHome;
+	this.pos.y += this.vel.y + this.vel2.y*25 + this.attraction.y * HOME_PLANET_INFLUENCE * dampHome;
 
 	this.vel2.x *= 0.9;
 	this.vel2.y *= 0.9;
 
-	this.speed *= 0.5;
+	this.speed *= 0.9;
+
+
+	document.getElementById("speed").innerHTML = Math.round(this.speed*10) / 10.0;
+	document.getElementById("R").innerHTML = Math.round(this.distanceToCenter*10) / 10.0;
 
     //this.pos.x = (r0*Math.sin (this.angle) + planet.pos.x);
     //this.pos.y = (r0*Math.cos (this.angle) + planet.pos.y);
 }
 
-Player.prototype.draw = function (planet) {
+Player.prototype.draw = function (planets) {
 
 	stroke(255,255,255); 
 	c.fillStyle = "#ffffff";
@@ -123,8 +173,15 @@ Player.prototype.draw = function (planet) {
     c.stroke();
     c.fill();
 
+    c.lineWidth = 50;
     c.beginPath();
     c.moveTo(this.pos.x, this.pos.y);
     c.lineTo(this.planet.pos.x, this.planet.pos.y);
     c.stroke();
+
+    c.beginPath();
+    c.moveTo(this.pos.x, this.pos.y);
+    c.lineTo(planets[this.runnerUpPlanet].pos.x, planets[this.runnerUpPlanet].pos.y);
+    c.stroke();
+
 }    

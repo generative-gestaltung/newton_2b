@@ -73,6 +73,12 @@ Util.circle = function (x,y,R,r,g,b) {
   Util.lineBloom (r,g,b,1460);
 }
 
+Util.circleNoBloom = function (x,y,R,r,g,b) {
+  c.beginPath();
+  c.arc (x,y,R, 0, 2*Math.PI);
+  c.stroke();
+}
+
 
 
 
