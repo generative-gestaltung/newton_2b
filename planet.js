@@ -6,7 +6,7 @@ var Planet = function (pX, pY, vX, vY, r, orbit, speed) {
     this.speed = speed;
     this.orbit = orbit;
     this.table = [];
-    this.atmosphereR = r+1000;
+    this.atmosphereR = r*(1+PLANET_ATMOSPHERE_RATIO);
 
     ind = Util.randI(0,2);
     this.color = {r:COLORS0[ind].r, g:COLORS0[ind].g, b:COLORS0[ind].b};

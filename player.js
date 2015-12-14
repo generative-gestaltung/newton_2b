@@ -77,7 +77,6 @@ Player.prototype.update = function (planets) {
 	var dMin = 999999;
 	var dMin2 = 999999;
 	
-
 	/*
 	for (i=0; i<N_PLANETS; i++) {
 		var d = Util.dist(this.pos, planets[i].pos);
@@ -123,12 +122,13 @@ Player.prototype.update = function (planets) {
 	}
 	dampSun = 1.0;
 	dampOthers = 1.0;
-	dampHome = 0.9;
+	dampHome = 0.1;
 
-	if (Util.dist(this.pos, this.planet.pos)<this.planet.atmosphereR) {
+	nextPos = {x:this.pos + this.vel.x, y:this.pos.y+this.vel.y};
+	if (Util.dist(nextPos, this.planet.pos)<this.planet.R+500) {
     	dampSun = 0;
     	dampOthers = 0;
-    	dampHome = 0.1;
+    	dampHome = 0;
     }
 
 	sunAttraction = Util.calcAttraction(this.pos, center, 0);
@@ -156,6 +156,13 @@ Player.prototype.update = function (planets) {
 
 	this.speed *= 0.9;
 
+
+	if (Util.dist(this.pos, center) < SUN_R || this.distanceToCenter>100000) {
+		gameOver = true;
+		document.getElementById("info").innerHTML = "game over";
+		if (started)
+			document.getElementById("info").innerHTML+="\nscore "+score;
+	}
 
 	document.getElementById("speed").innerHTML = Math.round(this.speed*10) / 10.0;
 	document.getElementById("R").innerHTML = Math.round(this.distanceToCenter*10) / 10.0;
