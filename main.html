@@ -33,13 +33,11 @@
     }
 
     var emitComet = function (i) {
-
-      if(Math.random() > 0.5){
-      comets[i] = new Comet (Util.rand(40000,41000), Util.rand(40000,41000), 10, 10, Util.rand(30,300),true);
-      }else{
-      comets[i] = new Comet (Util.rand(-40000,-41000), Util.rand(-40000,-41000), 10, 10, Util.rand(30,300),true);
-      } 
-      comets[i].vel.y = -Util.rand(50,100);
+      var p = Math.random();
+      p = Math.round(p*Math.PI*2);
+      var R = 40000;
+      console.log(p);
+      comets[i] = new Comet (R*Math.sin(p), R*Math.cos(p), 10, 10, Util.rand(30,300),true); 
     }
 
     var initPlanets = function () {
@@ -94,6 +92,9 @@
       H = canvas.height;
       c = canvas.getContext('2d');
       frameCount = 0;
+      var audio = new Audio('mixdown.wav');
+      audio.play();
+      console.log(audio.currentTime);
       initGame();
     }
 
@@ -113,14 +114,14 @@
             started = true;
             gameOver = false;
             document.getElementById("info").innerHTML="";
-            init();
+            initGame();
           }
         }
         else if (gameOver) {
           if (e.which==32) {
             gameOver = false;
             document.getElementById("info").innerHTML="";
-            init();
+            initGame();
           }
         }
         else {
@@ -135,10 +136,6 @@
 
       player = new Player (0,0, planets[0]);
       player.init(planets[0]);
-
-      var audio = new Audio('mixdown.wav');
-      audio.play();
-      console.log(audio.currentTime);
     }
 
 
