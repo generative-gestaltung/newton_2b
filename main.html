@@ -113,14 +113,15 @@
           if (e.which==32) {
             started = true;
             gameOver = false;
-            document.getElementById("info").innerHTML="";
+            document.getElementById("user_info").style.display = "none";
+            //document.getElementById("info").innerHTML="";
             initGame();
           }
         }
         else if (gameOver) {
           if (e.which==32) {
             gameOver = false;
-            document.getElementById("info").innerHTML="";
+            document.getElementById("user_info").style.display = "none";
             initGame();
           }
         }
@@ -282,9 +283,15 @@
       <b id="score" style="color:#ff9120; font-size:30pt;">0</b>
     </div>
 
-    <div id="info" style="position:absolute; top:50%; left:20%; color:white; font-size:140pt;">
-      hit space
+    <div id="user_info">
+      <div id="info" style="position:absolute; top:20%; left:20%; color:white; font-size:140pt;">
+        hit space
+      </div>
+      <div id="info2" style="position:absolute; top:80%; left:20%; color:white; font-size:20pt; width:50%;">
+        use l/r arrow keys to move on planet surface. get faster to escape your planets gravity field. hit asteroids to smash them to pieces. the debris will feed your planet. avoid the sun.
+      </div>
     </div>
+
     <canvas id="myCanvas" width="1280" height="800"></canvas>
     <script>
       init();

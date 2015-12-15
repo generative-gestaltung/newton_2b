@@ -65,10 +65,8 @@ Planet.prototype.update = function (ind) {
         force.x += f.x;
         force.y += f.y;
     }
-    
     this.vel.x += force.x;
     this.vel.y += force.y;
-
     this.pos.x += this.vel.x;
     this.pos.y += this.vel.y;
 */
@@ -94,10 +92,8 @@ Planet.prototype.draw = function (detail) {
       c.translate (0,0);
 
       r0 = this.getSurface (i / detail * Math.PI*2);
-
       x0 = r0*Math.sin(i/detail*Math.PI*2) + this.pos.x;
       y0 = r0*Math.cos(i/detail*Math.PI*2) + this.pos.y;
-    
       r0 = this.getSurface((i+1) / detail * Math.PI*2);
 
       

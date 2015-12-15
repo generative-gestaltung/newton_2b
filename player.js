@@ -108,7 +108,7 @@ Player.prototype.update = function (planets) {
 
 
 	//	console.log (distanceToCenter,this.phi,planet.getSurface(this.phi));
-	if (this.distanceToCenter < this.planet.getSurface(this.phi)) {
+	if (this.distanceToCenter < this.planet.R) {
 		this.attraction.x *= 0;
 		this.attraction.y *= 0;
 	}
@@ -140,8 +140,6 @@ Player.prototype.update = function (planets) {
 	           + sunAttraction.y*SUN_INFLUENCE*dampSun 
 	           + planetAttraction.y*OTHER_PLANETS_INFLUENCE*dampOthers;
     
-    
-    
     //console.log ("planet p:", planet.pos.x, planet.pos.y);
     //console.log ("player p:", this.pos.x, this.pos.y);
 	//console.log ("force:", f.x, f.y);
@@ -153,15 +151,14 @@ Player.prototype.update = function (planets) {
 
 	this.vel2.x *= 0.9;
 	this.vel2.y *= 0.9;
-
 	this.speed *= 0.9;
 
 
 	if (Util.dist(this.pos, center) < SUN_R || this.distanceToCenter>100000 && started) {
 		gameOver = true;
-		document.getElementById("info").innerHTML = "game over";
+		document.getElementById("user_info").style.display = "block";
 		if (started)
-			document.getElementById("info").innerHTML+="\nscore "+score;
+			document.getElementById("info").innerHTML="score "+score+"<br>hit space</div>";
 	}
 
 	document.getElementById("speed").innerHTML = Math.round(this.speed*10) / 10.0;
